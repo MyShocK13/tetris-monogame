@@ -26,6 +26,8 @@ namespace Tetris
 
         private FieldState[,] _boardFields;
         private int[,] _boardColor;
+        float _movement;
+        float _speed;
 
         private Vector2[,,] _figures;
         private bool _showNewBlock;
@@ -37,6 +39,18 @@ namespace Tetris
         private int _dynamicFigureColor;
         private Vector2 _positionForDynamicFigure;
         private Vector2[] _dynamicFigure = new Vector2[_blocksCountInFigure];
+
+        public float Movement
+        {
+            set { _movement = value; }
+            get { return _movement; }
+        }
+        
+        public float Speed
+        {
+            set { _speed = value; }
+            get { return _speed; }
+        }
 
         public Board(Game game, ref Texture2D textures, Rectangle[] rectangles)
             : base(game)

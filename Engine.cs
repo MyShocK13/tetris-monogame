@@ -70,6 +70,9 @@ namespace Tetris
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
+            // TODO: Score
+            _board.Speed += 0.005f;
+
             // TODO: Pause
             _board.FindDynamicFigure();
             _board.CreateNewFigure();
@@ -85,6 +88,15 @@ namespace Tetris
 
             if (keyboardState.IsKeyDown(Keys.W) || keyboardState.IsKeyDown(Keys.Space))
                 _board.RotateFigure();
+
+            // Moving figure
+            if (_board.Movement >= 1)
+            {
+                _board.Movement = 0;
+                _board.MoveFigureDown();
+            }
+            else
+                _board.Movement += _board.Speed;
 
             base.Update(gameTime);
         }
