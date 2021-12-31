@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Tetris
 {
@@ -42,6 +43,8 @@ namespace Tetris
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 600;
             _graphics.ApplyChanges();
+
+            TargetElapsedTime = TimeSpan.FromSeconds(1.0f / 10.0f);
 
             base.Initialize();
         }
