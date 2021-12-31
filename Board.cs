@@ -29,8 +29,8 @@ namespace Tetris
 
         private Vector2[,,] _figures;
         private bool _showNewBlock;
-        private Queue<int> _nextFigures = new Queue<int>();
-        private Queue<int> _nextFiguresModification = new Queue<int>();
+        private Queue<int> _next_figures = new Queue<int>();
+        private Queue<int> _next_figuresModification = new Queue<int>();
         private Random _random = new Random();
         private int _dynamicFigureNumber;
         private int _dynamicFigureModificationNumber;
@@ -41,32 +41,30 @@ namespace Tetris
         public Board(Game game, ref Texture2D textures, Rectangle[] rectangles)
             : base(game)
         {
-            //_spriteBatch = Game.Services.GetService<SpriteBatch>();
-            _spriteBatch = (SpriteBatch)Game.Services.GetService(typeof(SpriteBatch));
+            _spriteBatch = Game.Services.GetService<SpriteBatch>();
 
             // Textures for blocks
             _textures = textures;
 
-            // Rectangles to draw figures
+            // Rectangles to draw _figures
             _rectangles = rectangles;
 
             // Create Tetris board
             _boardFields = new FieldState[_width, _height];
             _boardColor = new int[_width, _height];
 
-            // Create figures
+            // Create _figures
             CreateFigures();
 
-            _nextFigures.Enqueue(0);
-            //_nextFigures.Enqueue(_random.Next(7));
-            //_nextFigures.Enqueue(_random.Next(7));
-            //_nextFigures.Enqueue(_random.Next(7));
-            //_nextFigures.Enqueue(_random.Next(7));
+            _next_figures.Enqueue(_random.Next(7));
+            _next_figures.Enqueue(_random.Next(7));
+            _next_figures.Enqueue(_random.Next(7));
+            _next_figures.Enqueue(_random.Next(7));
 
-            _nextFiguresModification.Enqueue(_random.Next(4));
-            _nextFiguresModification.Enqueue(_random.Next(4));
-            _nextFiguresModification.Enqueue(_random.Next(4));
-            _nextFiguresModification.Enqueue(_random.Next(4));
+            _next_figuresModification.Enqueue(_random.Next(4));
+            _next_figuresModification.Enqueue(_random.Next(4));
+            _next_figuresModification.Enqueue(_random.Next(4));
+            _next_figuresModification.Enqueue(_random.Next(4));
         }
 
         public override void Initialize()
@@ -109,11 +107,11 @@ namespace Tetris
         {
             if (_showNewBlock)
             {
-                _dynamicFigureNumber = _nextFigures.Dequeue();
-                _nextFigures.Enqueue(_random.Next(7));
+                _dynamicFigureNumber = _next_figures.Dequeue();
+                _next_figures.Enqueue(_random.Next(7));
 
-                _dynamicFigureModificationNumber = _nextFiguresModification.Dequeue();
-                _nextFiguresModification.Enqueue(_random.Next(4));
+                _dynamicFigureModificationNumber = _next_figuresModification.Dequeue();
+                _next_figuresModification.Enqueue(_random.Next(4));
 
                 _dynamicFigureColor = _dynamicFigureNumber;
 
@@ -135,8 +133,8 @@ namespace Tetris
 
         private void CreateFigures()
         {
-            // Figures[figure's number, figure's modification, figure's block number] = Vector2
-            // At all figures is 7, every has 4 modifications (for cube all modifications the same)
+            // _figures[figure's number, figure's modification, figure's block number] = Vector2
+            // At all _figures is 7, every has 4 modifications (for cube all modifications the same)
             // and every figure consists from 4 blocks
             _figures = new Vector2[7, 4, 4];
 
@@ -148,6 +146,99 @@ namespace Tetris
                 _figures[0, i, 2] = new Vector2(1, 1);
                 _figures[0, i, 3] = new Vector2(2, 1);
             }
+
+            // I-_figures
+            for (int i = 0; i < 4; i += 2)
+            {
+                _figures[1, i, 0] = new Vector2(0, 0);
+                _figures[1, i, 1] = new Vector2(1, 0);
+                _figures[1, i, 2] = new Vector2(2, 0);
+                _figures[1, i, 3] = new Vector2(3, 0);
+                _figures[1, i + 1, 0] = new Vector2(1, 0);
+                _figures[1, i + 1, 1] = new Vector2(1, 1);
+                _figures[1, i + 1, 2] = new Vector2(1, 2);
+                _figures[1, i + 1, 3] = new Vector2(1, 3);
+            }
+
+            // J-_figures
+            _figures[2, 0, 0] = new Vector2(0, 0);
+            _figures[2, 0, 1] = new Vector2(1, 0);
+            _figures[2, 0, 2] = new Vector2(2, 0);
+            _figures[2, 0, 3] = new Vector2(2, 1);
+            _figures[2, 1, 0] = new Vector2(2, 0);
+            _figures[2, 1, 1] = new Vector2(2, 1);
+            _figures[2, 1, 2] = new Vector2(1, 2);
+            _figures[2, 1, 3] = new Vector2(2, 2);
+            _figures[2, 2, 0] = new Vector2(0, 0);
+            _figures[2, 2, 1] = new Vector2(0, 1);
+            _figures[2, 2, 2] = new Vector2(1, 1);
+            _figures[2, 2, 3] = new Vector2(2, 1);
+            _figures[2, 3, 0] = new Vector2(1, 0);
+            _figures[2, 3, 1] = new Vector2(2, 0);
+            _figures[2, 3, 2] = new Vector2(1, 1);
+            _figures[2, 3, 3] = new Vector2(1, 2);
+
+            // L-_figures
+            _figures[3, 0, 0] = new Vector2(0, 0);
+            _figures[3, 0, 1] = new Vector2(1, 0);
+            _figures[3, 0, 2] = new Vector2(2, 0);
+            _figures[3, 0, 3] = new Vector2(0, 1);
+            _figures[3, 1, 0] = new Vector2(2, 0);
+            _figures[3, 1, 1] = new Vector2(2, 1);
+            _figures[3, 1, 2] = new Vector2(1, 0);
+            _figures[3, 1, 3] = new Vector2(2, 2);
+            _figures[3, 2, 0] = new Vector2(0, 1);
+            _figures[3, 2, 1] = new Vector2(1, 1);
+            _figures[3, 2, 2] = new Vector2(2, 1);
+            _figures[3, 2, 3] = new Vector2(2, 0);
+            _figures[3, 3, 0] = new Vector2(1, 0);
+            _figures[3, 3, 1] = new Vector2(2, 2);
+            _figures[3, 3, 2] = new Vector2(1, 1);
+            _figures[3, 3, 3] = new Vector2(1, 2);
+
+            // S-_figures
+            for (int i = 0; i < 4; i += 2)
+            {
+                _figures[4, i, 0] = new Vector2(0, 1);
+                _figures[4, i, 1] = new Vector2(1, 1);
+                _figures[4, i, 2] = new Vector2(1, 0);
+                _figures[4, i, 3] = new Vector2(2, 0);
+                _figures[4, i + 1, 0] = new Vector2(1, 0);
+                _figures[4, i + 1, 1] = new Vector2(1, 1);
+                _figures[4, i + 1, 2] = new Vector2(2, 1);
+                _figures[4, i + 1, 3] = new Vector2(2, 2);
+            }
+
+            // Z-_figures
+            for (int i = 0; i < 4; i += 2)
+            {
+                _figures[5, i, 0] = new Vector2(0, 0);
+                _figures[5, i, 1] = new Vector2(1, 0);
+                _figures[5, i, 2] = new Vector2(1, 1);
+                _figures[5, i, 3] = new Vector2(2, 1);
+                _figures[5, i + 1, 0] = new Vector2(2, 0);
+                _figures[5, i + 1, 1] = new Vector2(1, 1);
+                _figures[5, i + 1, 2] = new Vector2(2, 1);
+                _figures[5, i + 1, 3] = new Vector2(1, 2);
+            }
+
+            // T-_figures
+            _figures[6, 0, 0] = new Vector2(0, 1);
+            _figures[6, 0, 1] = new Vector2(1, 1);
+            _figures[6, 0, 2] = new Vector2(2, 1);
+            _figures[6, 0, 3] = new Vector2(1, 0);
+            _figures[6, 1, 0] = new Vector2(1, 0);
+            _figures[6, 1, 1] = new Vector2(1, 1);
+            _figures[6, 1, 2] = new Vector2(1, 2);
+            _figures[6, 1, 3] = new Vector2(2, 1);
+            _figures[6, 2, 0] = new Vector2(0, 0);
+            _figures[6, 2, 1] = new Vector2(1, 0);
+            _figures[6, 2, 2] = new Vector2(2, 0);
+            _figures[6, 2, 3] = new Vector2(1, 1);
+            _figures[6, 3, 0] = new Vector2(2, 0);
+            _figures[6, 3, 1] = new Vector2(2, 1);
+            _figures[6, 3, 2] = new Vector2(2, 2);
+            _figures[6, 3, 3] = new Vector2(1, 1);
         }
 
         private void ClearBoardField(int i, int j)
