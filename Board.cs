@@ -31,8 +31,8 @@ namespace Tetris
 
         private Vector2[,,] _figures;
         private bool _showNewBlock;
-        private Queue<int> _next_figures = new Queue<int>();
-        private Queue<int> _next_figuresModification = new Queue<int>();
+        private Queue<int> _nextFigures = new Queue<int>();
+        private Queue<int> _nextFiguresModification = new Queue<int>();
         private Random _random = new Random();
         private int _dynamicFigureNumber;
         private int _dynamicFigureModificationNumber;
@@ -70,15 +70,15 @@ namespace Tetris
             // Create _figures
             CreateFigures();
 
-            _next_figures.Enqueue(_random.Next(7));
-            _next_figures.Enqueue(_random.Next(7));
-            _next_figures.Enqueue(_random.Next(7));
-            _next_figures.Enqueue(_random.Next(7));
+            _nextFigures.Enqueue(_random.Next(7));
+            _nextFigures.Enqueue(_random.Next(7));
+            _nextFigures.Enqueue(_random.Next(7));
+            _nextFigures.Enqueue(_random.Next(7));
 
-            _next_figuresModification.Enqueue(_random.Next(4));
-            _next_figuresModification.Enqueue(_random.Next(4));
-            _next_figuresModification.Enqueue(_random.Next(4));
-            _next_figuresModification.Enqueue(_random.Next(4));
+            _nextFiguresModification.Enqueue(_random.Next(4));
+            _nextFiguresModification.Enqueue(_random.Next(4));
+            _nextFiguresModification.Enqueue(_random.Next(4));
+            _nextFiguresModification.Enqueue(_random.Next(4));
         }
 
         public override void Initialize()
@@ -105,6 +105,22 @@ namespace Tetris
                         _spriteBatch.Draw(_textures, startPosition, _rectangles[_boardColor[i, j]], Color.White);
                     }
 
+            // Drawing the next figure
+            Queue<int>.Enumerator figure = _nextFigures.GetEnumerator();
+            Queue<int>.Enumerator modification = _nextFiguresModification.GetEnumerator();
+
+            //for (int i = 0; i < _nextFigures.Count; i++)
+            for (int i = 0; i < 1; i++)
+            {
+                figure.MoveNext();
+                modification.MoveNext();
+                for (int j = 0; j < _blocksCountInFigure; j++)
+                {
+                    startPosition = _rectangles[0].Height * (new Vector2(24, 3 + 5 * i) + _figures[figure.Current, modification.Current, j]);
+                    _spriteBatch.Draw(_textures, startPosition, _rectangles[figure.Current], Color.White);
+                }
+            }
+
             base.Draw(gameTime);
         }
 
@@ -121,11 +137,11 @@ namespace Tetris
         {
             if (_showNewBlock)
             {
-                _dynamicFigureNumber = _next_figures.Dequeue();
-                _next_figures.Enqueue(_random.Next(7));
+                _dynamicFigureNumber = _nextFigures.Dequeue();
+                _nextFigures.Enqueue(_random.Next(7));
 
-                _dynamicFigureModificationNumber = _next_figuresModification.Dequeue();
-                _next_figuresModification.Enqueue(_random.Next(4));
+                _dynamicFigureModificationNumber = _nextFiguresModification.Dequeue();
+                _nextFiguresModification.Enqueue(_random.Next(4));
 
                 _dynamicFigureColor = _dynamicFigureNumber;
 
