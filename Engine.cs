@@ -82,7 +82,19 @@ namespace Tetris
             _board.Speed += 0.005f;
 
             // TODO: Pause
+            // Find dynamic figure position
             _board.FindDynamicFigure();
+
+            // Increase player score
+            int lines = _board.DestroyLines();
+            if (lines > 0)
+            {
+                _score.Value += (int)((5.0f / 2.0f) * lines * (lines + 3));
+                _board.Speed += 0.005f;
+            }
+
+            _score.Level = (int)(10 * _board.Speed);
+
             _board.CreateNewFigure();
 
             if (keyboardState.IsKeyDown(Keys.A))

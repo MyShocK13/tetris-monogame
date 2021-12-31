@@ -38,6 +38,7 @@ namespace Tetris
         private int _dynamicFigureColor;
         private Vector2 _positionForDynamicFigure;
         private Vector2[] _dynamicFigure = new Vector2[_blocksCountInFigure];
+        bool _blockLine;
 
         public float Movement
         {
@@ -83,6 +84,8 @@ namespace Tetris
         public override void Initialize()
         {
             _showNewBlock = true;
+            _movement = 0;
+            _speed = 0.1f;
 
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _height; j++)
@@ -308,6 +311,42 @@ namespace Tetris
                     _boardColor[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y] = _dynamicFigureColor;
                 }
             }
+        }
+
+        public int DestroyLines()
+        {
+            // Find total lines
+            int blockLineCount = 0;
+            for (int j = 0; j < _height; j++)
+            {
+                for (int i = 0; i < _width; i++)
+                    if (_boardFields[i, j] == FieldState.Static)
+                        _blockLine = true;
+                    else
+                    {
+                        _blockLine = false;
+                        break;
+                    }
+
+                //Destroy total lines
+                if (_blockLine)
+                {
+                    // Save number of total lines
+                    blockLineCount++;
+                    for (int l = j; l > 0; l--)
+                        for (int k = 0; k < _width; k++)
+                        {
+                            _boardFields[k, l] = _boardFields[k, l - 1];
+                            _boardColor[k, l] = _boardColor[k, l - 1];
+                        }
+                    for (int l = 0; l < _width; l++)
+                    {
+                        _boardFields[l, 0] = FieldState.Free;
+                        _boardColor[l, 0] = -1;
+                    }
+                }
+            }
+            return blockLineCount;
         }
 
         public void SortingVector2(ref Vector2[] vector, bool sortByX, int a, int b)
