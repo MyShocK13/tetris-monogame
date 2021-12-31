@@ -17,6 +17,7 @@ namespace Tetris
         // Game
         private Board _board;
         Score _score;
+        bool _pause;
 
         public Engine()
         {
@@ -79,41 +80,52 @@ namespace Tetris
                 Exit();
 
             // TODO: Pause
-            // Find dynamic figure position
-            _board.FindDynamicFigure();
+            if (keyboardState.IsKeyDown(Keys.P))
+                _pause = !_pause;
 
-            // Increase player score
-            int lines = _board.DestroyLines();
-            if (lines > 0)
+            if (!_pause)
             {
-                _score.Value += (int)((5.0f / 2.0f) * lines * (lines + 3));
-                _board.Speed += 0.005f;
+                // Find dynamic figure position
+                _board.FindDynamicFigure();
+
+                // Increase player score
+                int lines = _board.DestroyLines();
+                if (lines > 0)
+                {
+                    _score.Value += (int)((5.0f / 2.0f) * lines * (lines + 3));
+                    _board.Speed += 0.005f;
+                }
+
+                _score.Level = (int)(10 * _board.Speed);
+
+                if (!_board.CreateNewFigure())
+                {
+                    return;
+                }
+                else
+                {
+                    if (keyboardState.IsKeyDown(Keys.A))
+                        _board.MoveFigureLeft();
+
+                    if (keyboardState.IsKeyDown(Keys.D))
+                        _board.MoveFigureRight();
+
+                    if (keyboardState.IsKeyDown(Keys.S))
+                        _board.MoveFigureDown();
+
+                    if (keyboardState.IsKeyDown(Keys.W) || keyboardState.IsKeyDown(Keys.Space))
+                        _board.RotateFigure();
+
+                    // Moving figure
+                    if (_board.Movement >= 1)
+                    {
+                        _board.Movement = 0;
+                        _board.MoveFigureDown();
+                    }
+                    else
+                        _board.Movement += _board.Speed;
+                }
             }
-
-            _score.Level = (int)(10 * _board.Speed);
-
-            _board.CreateNewFigure();
-
-            if (keyboardState.IsKeyDown(Keys.A))
-                _board.MoveFigureLeft();
-
-            if (keyboardState.IsKeyDown(Keys.D))
-                _board.MoveFigureRight();
-
-            if (keyboardState.IsKeyDown(Keys.S))
-                _board.MoveFigureDown();
-
-            if (keyboardState.IsKeyDown(Keys.W) || keyboardState.IsKeyDown(Keys.Space))
-                _board.RotateFigure();
-
-            // Moving figure
-            if (_board.Movement >= 1)
-            {
-                _board.Movement = 0;
-                _board.MoveFigureDown();
-            }
-            else
-                _board.Movement += _board.Speed;
 
             base.Update(gameTime);
         }
@@ -125,5 +137,7 @@ namespace Tetris
             base.Draw(gameTime);
             _spriteBatch.End();
         }
+
+
     }
 }
