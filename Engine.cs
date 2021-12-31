@@ -100,7 +100,7 @@ namespace Tetris
 
                 if (!_board.CreateNewFigure())
                 {
-                    return;
+                    GameOver();
                 }
                 else
                 {
@@ -138,6 +138,21 @@ namespace Tetris
             _spriteBatch.End();
         }
 
+        private void GameOver()
+        {
+            if (_score.Value > _score.RecordScore)
+            {
+                _score.RecordScore = _score.Value;
+
+                _pause = true;
+
+                //TODO: Record
+
+                _pause = false;
+            }
+            _board.Initialize();
+            _score.Initialize();
+        }
 
     }
 }
