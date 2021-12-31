@@ -80,6 +80,9 @@ namespace Tetris
             if (keyboardState.IsKeyDown(Keys.S))
                 _board.MoveFigureDown();
 
+            if (keyboardState.IsKeyDown(Keys.W) || keyboardState.IsKeyDown(Keys.Space))
+                _board.RotateFigure();
+
             base.Update(gameTime);
         }
 

@@ -234,6 +234,53 @@ namespace Tetris
             _positionForDynamicFigure.Y++;
         }
 
+        public void RotateFigure()
+        {
+            // Check colisions for next modification
+            Vector2[] testDynamicFigure = new Vector2[_dynamicFigure.GetUpperBound(0) + 1];
+            for (int i = 0; i < _blocksCountInFigure; i++)
+                testDynamicFigure[i] = _figures[_dynamicFigureNumber, (_dynamicFigureModificationNumber + 1) % 4, i] + _positionForDynamicFigure;
+
+            // Make sure that figure can rotate if she stand near left and right borders
+            SortingVector2(ref testDynamicFigure, true, testDynamicFigure.GetLowerBound(0), testDynamicFigure.GetUpperBound(0));
+            int leftFigureBound;
+            int rightFigureBound;
+            if ((leftFigureBound = (int)testDynamicFigure[0].X) < 0)
+            {
+                for (int i = 0; i < _blocksCountInFigure; i++)
+                {
+                    testDynamicFigure[i] += new Vector2(0 - leftFigureBound, 0);
+                }
+                if (TryPlaceFigureOnBoard(testDynamicFigure))
+                    _positionForDynamicFigure += new Vector2(0 - leftFigureBound, 0);
+            }
+
+            if ((rightFigureBound = (int)testDynamicFigure[_blocksCountInFigure - 1].X) >= _width)
+            {
+                for (int i = 0; i < _blocksCountInFigure; i++)
+                {
+                    testDynamicFigure[i] -= new Vector2(rightFigureBound - _width + 1, 0);
+                }
+                if (TryPlaceFigureOnBoard(testDynamicFigure))
+                    _positionForDynamicFigure -= new Vector2(rightFigureBound - _width + 1, 0);
+            }
+
+            if (TryPlaceFigureOnBoard(testDynamicFigure))
+            {
+                _dynamicFigureModificationNumber = (_dynamicFigureModificationNumber + 1) % 4;
+                // Clear dynamic fields
+                for (int i = 0; i <= _dynamicFigure.GetUpperBound(0); i++)
+                    ClearBoardField((int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y);
+
+                _dynamicFigure = testDynamicFigure;
+                for (int i = 0; i <= _dynamicFigure.GetUpperBound(0); i++)
+                {
+                    _boardFields[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y] = FieldState.Dynamic;
+                    _boardColor[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y] = _dynamicFigureColor;
+                }
+            }
+        }
+
         public void SortingVector2(ref Vector2[] vector, bool sortByX, int a, int b)
         {
             if (a >= b)
