@@ -191,6 +191,49 @@ namespace Tetris
             _positionForDynamicFigure.X++;
         }
 
+        public void MoveFigureDown()
+        {
+            // Sorting blocks fro dynamic figure to correct moving
+            SortingVector2(ref _dynamicFigure, false, _dynamicFigure.GetLowerBound(0), _dynamicFigure.GetUpperBound(0));
+
+            // Check colisions
+            for (int i = 0; i < _blocksCountInFigure; i++)
+            {
+                if ((_dynamicFigure[i].Y == _height - 1))
+                {
+                    for (int k = 0; k < _blocksCountInFigure; k++)
+                        _boardFields[(int)_dynamicFigure[k].X, (int)_dynamicFigure[k].Y] = FieldState.Static;
+                    
+                    _showNewBlock = true;
+                    return;
+                }
+
+                if (_boardFields[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y + 1] == FieldState.Static)
+                {
+                    for (int k = 0; k < _blocksCountInFigure; k++)
+                        _boardFields[(int)_dynamicFigure[k].X, (int)_dynamicFigure[k].Y] = FieldState.Static;
+                    
+                    _showNewBlock = true;
+                    return;
+                }
+            }
+
+            // Move figure on board
+            for (int i = _blocksCountInFigure - 1; i >= 0; i--)
+            {
+                _boardFields[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y + 1] = _boardFields[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y];
+                _boardColor[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y + 1] = _boardColor[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y];
+
+                ClearBoardField((int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y);
+
+                // Change position for blocks in _dynamicFigure
+                _dynamicFigure[i].Y = _dynamicFigure[i].Y + 1;
+            }
+
+            // Change position vector
+            _positionForDynamicFigure.Y++;
+        }
+
         public void SortingVector2(ref Vector2[] vector, bool sortByX, int a, int b)
         {
             if (a >= b)

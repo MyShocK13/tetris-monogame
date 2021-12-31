@@ -77,6 +77,9 @@ namespace Tetris
             if (keyboardState.IsKeyDown(Keys.D))
                 _board.MoveFigureRight();
 
+            if (keyboardState.IsKeyDown(Keys.S))
+                _board.MoveFigureDown();
+
             base.Update(gameTime);
         }
 
