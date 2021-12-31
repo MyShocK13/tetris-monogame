@@ -6,15 +6,34 @@ namespace Tetris
 {
     public class Engine : Game
     {
+        // Graphics
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Texture2D _tetrisBackground;
+        private Texture2D _background, _textures;
+        private readonly Rectangle[] _blocks = new Rectangle[7];
+
+        // Game
+        private Board _board;
 
         public Engine()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            //IsMouseVisible = true;
+
+            // O figure
+            _blocks[0] = new Rectangle(312, 0, 24, 24);
+            // I figure
+            _blocks[1] = new Rectangle(0, 24, 24, 24);
+            // J figure
+            _blocks[2] = new Rectangle(120, 0, 24, 24);
+            // L figure
+            _blocks[3] = new Rectangle(216, 24, 24, 24);
+            // S figure
+            _blocks[4] = new Rectangle(48, 96, 24, 24);
+            // Z figure
+            _blocks[5] = new Rectangle(240, 72, 24, 24);
+            // T figure
+            _blocks[6] = new Rectangle(144, 96, 24, 24);
         }
 
         protected override void Initialize()
@@ -30,7 +49,14 @@ namespace Tetris
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _tetrisBackground = Content.Load<Texture2D>("background");
+            Services.AddService<SpriteBatch>(_spriteBatch);
+
+            _background = Content.Load<Texture2D>("background");
+            _textures = Content.Load<Texture2D>("tetris");
+
+            _board = new Board(this, ref _textures, _blocks);
+            _board.Initialize();
+            Components.Add(_board);
         }
 
         protected override void Update(GameTime gameTime)
@@ -41,16 +67,20 @@ namespace Tetris
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
+            // TODO: Pause
+            _board.FindDynamicFigure();
+            _board.CreateNewFigure();
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             _spriteBatch.Begin();
-            _spriteBatch.Draw(_tetrisBackground, Vector2.Zero, Color.White);
+            _spriteBatch.Draw(_background, Vector2.Zero, Color.White);
+            base.Draw(gameTime);
             _spriteBatch.End();
 
-            base.Draw(gameTime);
         }
     }
 }
