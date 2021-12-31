@@ -78,9 +78,6 @@ namespace Tetris
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Score
-            _board.Speed += 0.005f;
-
             // TODO: Pause
             // Find dynamic figure position
             _board.FindDynamicFigure();
