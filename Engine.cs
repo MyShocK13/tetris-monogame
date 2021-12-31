@@ -11,10 +11,12 @@ namespace Tetris
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Texture2D _background, _textures;
+        SpriteFont _gameFont;
         private readonly Rectangle[] _blocks = new Rectangle[7];
 
         // Game
         private Board _board;
+        Score _score;
 
         public Engine()
         {
@@ -57,9 +59,15 @@ namespace Tetris
             _background = Content.Load<Texture2D>("background");
             _textures = Content.Load<Texture2D>("tetris");
 
+            _gameFont = Content.Load<SpriteFont>("font");
+
             _board = new Board(this, ref _textures, _blocks);
             _board.Initialize();
             Components.Add(_board);
+
+            _score = new Score(this, _gameFont);
+            _score.Initialize();
+            Components.Add(_score);
         }
 
         protected override void Update(GameTime gameTime)
@@ -107,7 +115,6 @@ namespace Tetris
             _spriteBatch.Draw(_background, Vector2.Zero, Color.White);
             base.Draw(gameTime);
             _spriteBatch.End();
-
         }
     }
 }
