@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.IO;
 
 namespace Tetris
 {
@@ -49,6 +50,11 @@ namespace Tetris
 
             TargetElapsedTime = TimeSpan.FromSeconds(1.0f / 10.0f);
 
+            using (FileStream fileStream = File.Open("record.dat", FileMode.OpenOrCreate))
+            {
+                fileStream.Close();
+            }
+
             base.Initialize();
         }
 
@@ -62,13 +68,27 @@ namespace Tetris
 
             _gameFont = Content.Load<SpriteFont>("font");
 
+            // Create game field
             _board = new Board(this, ref _textures, _blocks);
             _board.Initialize();
             Components.Add(_board);
 
+            // Save player's score and game level
             _score = new Score(this, _gameFont);
             _score.Initialize();
             Components.Add(_score);
+
+            // Load game record
+            using (StreamReader reader = File.OpenText("record.dat"))
+            {
+                string player = reader.ReadLine();
+                if (player != null)
+                    _score.RecordPlayer = player;
+
+                int record = Convert.ToInt32(reader.ReadLine());
+                if (record != 0)
+                    _score.RecordScore = record;
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -79,7 +99,6 @@ namespace Tetris
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Pause
             if (keyboardState.IsKeyDown(Keys.P))
                 _pause = !_pause;
 
@@ -146,7 +165,14 @@ namespace Tetris
 
                 _pause = true;
 
-                //TODO: Record
+                Record record = new Record();
+                _score.RecordPlayer = record.Player;
+
+                using (StreamWriter writer = File.CreateText("record.dat"))
+                {
+                    writer.WriteLine(_score.RecordPlayer);
+                    writer.WriteLine(_score.RecordScore);
+                }
 
                 _pause = false;
             }
