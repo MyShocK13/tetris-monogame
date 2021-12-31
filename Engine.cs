@@ -71,6 +71,12 @@ namespace Tetris
             _board.FindDynamicFigure();
             _board.CreateNewFigure();
 
+            if (keyboardState.IsKeyDown(Keys.A))
+                _board.MoveFigureLeft();
+
+            if (keyboardState.IsKeyDown(Keys.D))
+                _board.MoveFigureRight();
+
             base.Update(gameTime);
         }
 

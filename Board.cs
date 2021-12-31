@@ -131,6 +131,101 @@ namespace Tetris
             return true;
         }
 
+        public void MoveFigureLeft()
+        {
+            // Sorting blocks fro dynamic figure to correct moving
+            SortingVector2(ref _dynamicFigure, true, _dynamicFigure.GetLowerBound(0), _dynamicFigure.GetUpperBound(0));
+
+            // Check colisions
+            for (int i = 0; i < _blocksCountInFigure; i++)
+            {
+                if ((_dynamicFigure[i].X == 0))
+                    return;
+                if (_boardFields[(int)_dynamicFigure[i].X - 1, (int)_dynamicFigure[i].Y] == FieldState.Static)
+                    return;
+            }
+
+            // Move figure on board
+            for (int i = 0; i < _blocksCountInFigure; i++)
+            {
+                _boardFields[(int)_dynamicFigure[i].X - 1, (int)_dynamicFigure[i].Y] = _boardFields[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y];
+                _boardColor[(int)_dynamicFigure[i].X - 1, (int)_dynamicFigure[i].Y] = _boardColor[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y];
+
+                ClearBoardField((int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y);
+        
+                // Change position for blocks in DynamicFigure
+                _dynamicFigure[i].X = _dynamicFigure[i].X - 1;
+            }
+
+            // Change position vector
+            _positionForDynamicFigure.X--;
+        }
+
+        public void MoveFigureRight()
+        {
+            // Sorting blocks for dynamic figure to correct moving
+            SortingVector2(ref _dynamicFigure, true, _dynamicFigure.GetLowerBound(0), _dynamicFigure.GetUpperBound(0));
+
+            // Check colisions
+            for (int i = 0; i < _blocksCountInFigure; i++)
+            {
+                if ((_dynamicFigure[i].X == _width - 1))
+                    return;
+                if (_boardFields[(int)_dynamicFigure[i].X + 1, (int)_dynamicFigure[i].Y] == FieldState.Static)
+                    return;
+            }
+
+            // Move figure on board
+            for (int i = _blocksCountInFigure - 1; i >= 0; i--)
+            {
+                _boardFields[(int)_dynamicFigure[i].X + 1, (int)_dynamicFigure[i].Y] = _boardFields[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y];
+                _boardColor[(int)_dynamicFigure[i].X + 1, (int)_dynamicFigure[i].Y] = _boardColor[(int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y];
+
+                ClearBoardField((int)_dynamicFigure[i].X, (int)_dynamicFigure[i].Y);
+                
+                // Change position for blocks in DynamicFigure
+                _dynamicFigure[i].X = _dynamicFigure[i].X + 1;
+            }
+
+            // Change position vector
+            _positionForDynamicFigure.X++;
+        }
+
+        public void SortingVector2(ref Vector2[] vector, bool sortByX, int a, int b)
+        {
+            if (a >= b)
+                return;
+
+            int i = a;
+            for (int j = a; j <= b; j++)
+            {
+                if (sortByX)
+                {
+                    if (vector[j].X <= vector[b].X)
+                    {
+                        Vector2 tempVector = vector[i];
+                        vector[i] = vector[j];
+                        vector[j] = tempVector;
+                        i++;
+                    }
+                }
+                else
+                {
+                    if (vector[j].Y <= vector[b].Y)
+                    {
+                        Vector2 tempVector = vector[i];
+                        vector[i] = vector[j];
+                        vector[j] = tempVector;
+                        i++;
+                    }
+                }
+            }
+
+            int c = i - 1;
+            SortingVector2(ref vector, sortByX, a, c - 1);
+            SortingVector2(ref vector, sortByX, c + 1, b);
+        }
+
         private void CreateFigures()
         {
             // _figures[figure's number, figure's modification, figure's block number] = Vector2
